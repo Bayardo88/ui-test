@@ -1,0 +1,12 @@
+{
+  "name": "scalar-ui-tester",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI UI tester for Scalar prototypes: pick test templates, paste a prototype link, get a report with issues and fixes.",
+  "scripts": {
+    "dev": "npx netlify-cli dev",
+    "test": "node test/smoke.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

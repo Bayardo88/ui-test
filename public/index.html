@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Scalar UI Tester</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23102a4c'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#report">Skip to report</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="22" height="22"><rect width="32" height="32" rx="7" fill="currentColor"/><path d="M9 16.5l4.5 4.5L23 11" fill="none" stroke="var(--surface)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <h1>Scalar UI Tester</h1>
+    </div>
+    <div class="topbar-right">
+      <label class="passcode" id="passcode-wrap" hidden>
+        <span>Access code</span>
+        <input type="password" id="passcode" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+  </header>
+
+  <div class="banner" id="setup-banner" role="status" hidden></div>
+
+  <main class="layout">
+    <aside class="setup" aria-label="Test setup">
+      <form id="setup-form" novalidate>
+        <section class="panel">
+          <h2><span class="step">1</span> Prototype</h2>
+
+          <label class="field" for="url">
+            <span class="label">Prototype link</span>
+            <input type="url" id="url" name="url" inputmode="url" placeholder="https://www.figma.com/design/…" autocomplete="off" spellcheck="false" aria-describedby="url-hint">
+          </label>
+          <p class="hint" id="url-hint">A Figma design or prototype link, or a public page. One prototype per run.</p>
+
+          <div class="field">
+            <span class="label" id="shots-label">Screenshots <span class="optional">optional</span></span>
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="shots-input" accept="image/png,image/jpeg,image/webp" multiple aria-labelledby="shots-label" class="visually-hidden">
+              <button type="button" class="btn btn-secondary" id="shots-button">Add screenshots</button>
+              <span class="hint">or drop images here. Up to 6. Use them for private prototypes, or add them to a live page so layout can be judged.</span>
+            </div>
+            <ul class="shots" id="shots" aria-label="Added screenshots"></ul>
+          </div>
+
+          <details class="more">
+            <summary>Context for the reviewer</summary>
+            <label class="field" for="proto-name">
+              <span class="label">Prototype name <span class="optional">optional</span></span>
+              <input type="text" id="proto-name" maxlength="120" placeholder="Taken from the link if left empty">
+            </label>
+            <label class="field" for="task">
+              <span class="label">Primary user task <span class="optional" id="task-flag">needed for T11</span></span>
+              <textarea id="task" rows="2" maxlength="600" placeholder="Update the Q3 valuation for one portfolio company"></textarea>
+            </label>
+            <label class="field" for="notes">
+              <span class="label">Notes <span class="optional">optional</span></span>
+              <textarea id="notes" rows="2" maxlength="1500" placeholder="Who the users are, what stage the design is at, what to focus on"></textarea>
+            </label>
+            <div class="row">
+              <label class="field" for="viewport">
+                <span class="label">Viewport</span>
+                <select id="viewport">
+                  <option>Desktop, 1440 px wide</option>
+                  <option>Laptop, 1280 px wide</option>
+                  <option>Tablet, 768 px wide</option>
+                  <option>Mobile, 390 px wide</option>
+                </select>
+              </label>
+              <label class="field" for="language">
+                <span class="label">Report language</span>
+                <select id="language">
+                  <option value="en">English</option>
+                  <option value="es">Español</option>
+                </select>
+              </label>
+            </div>
+          </details>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2><span class="step">2</span> Tests</h2>
+            <span class="count" id="test-count" aria-live="polite"></span>
+          </div>
+          <div class="bundles" id="bundles" role="group" aria-label="Test bundles"></div>
+          <fieldset class="tests">
+            <legend class="visually-hidden">Test templates</legend>
+            <div id="tests"></div>
+          </fieldset>
+        </section>
+
+        <div class="run-bar">
+          <p class="form-error" id="form-error" role="alert" hidden></p>
+          <button type="submit" class="btn btn-primary" id="run">Run tests</button>
+          <button type="button" class="btn btn-secondary" id="stop" hidden>Stop</button>
+        </div>
+      </form>
+
+      <section class="panel history" id="history-panel" hidden>
+        <h2>Past reports</h2>
+        <p class="hint">Saved in this browser only.</p>
+        <ul id="history"></ul>
+      </section>
+    </aside>
+
+    <section class="report" id="report" tabindex="-1" aria-label="Report">
+      <div class="empty" id="empty">
+        <h2>No report yet</h2>
+        <p>Paste a prototype link, pick the tests, and run. Each test gets its own section with the issues found and a fix for each one.</p>
+        <ul class="empty-list">
+          <li><strong>Figma links</strong> are read frame by frame: a rendered image plus the layer outline, so contrast, sizes and component use are measured.</li>
+          <li><strong>Live pages</strong> are read as markup and styles. Add screenshots so layout can be judged too.</li>
+          <li><strong>Screenshots alone</strong> work for anything private.</li>
+        </ul>
+      </div>
+      <div id="run-panel" hidden></div>
+      <div id="report-body"></div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
